@@ -1,8 +1,16 @@
 import request from '@/utils/request'
 
+export function getList(params) {
+  return request({
+    url: '/api/sysuser/list',
+    method: 'get',
+    params
+  })
+}
+
 export function login(data) {
   return request({
-    url: '/vue-admin-template/user/login',
+    url: '/api/sysuser/login',
     method: 'post',
     data
   })
@@ -10,7 +18,7 @@ export function login(data) {
 
 export function getInfo(token) {
   return request({
-    url: '/vue-admin-template/user/info',
+    url: '/api/sysuser/info',
     method: 'get',
     params: { token }
   })
@@ -18,7 +26,7 @@ export function getInfo(token) {
 
 export function logout() {
   return request({
-    url: '/vue-admin-template/user/logout',
+    url: '/api/sysuser/logout',
     method: 'post'
   })
 }
