@@ -30,3 +30,26 @@ export function logout() {
     method: 'post'
   })
 }
+
+export function updateSysuser(bean) {
+  return request({
+    url: '/api/sysuser/save',
+    method: 'post',
+    data: bean
+  })
+}
+
+export function createSysuser(bean) {
+  return request({
+    url: '/api/sysuser/save',
+    method: 'post',
+    data: bean
+  })
+}
+
+export function removeSysUser(id) {
+  return request({
+    url: '/api/sysuser/' + id,
+    method: 'delete'
+  })
+}
