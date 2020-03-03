@@ -50,6 +50,8 @@
 
     </el-table>
 
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
+
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
         <el-form-item label="名称" prop="name">
@@ -101,7 +103,7 @@ export default {
         pageNo: 1,
         pageSize: 15,
         filter: {
-          name: '',
+          name: undefined,
           status: 1
         }
       },
