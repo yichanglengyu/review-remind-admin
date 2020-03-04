@@ -15,7 +15,7 @@
     </div>
     <el-table
       v-loading="listLoading"
-      :data="list"
+      :data="pageResult.rows"
       element-loading-text="Loading"
       border
       fit
@@ -50,7 +50,7 @@
 
     </el-table>
 
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
+    <pagination v-show="pageResult.totalElements>0" :total="pageResult.totalElements" :page.sync="condition.pageNo" :limit.sync="condition.pageSize" @pagination="fetchData" />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
@@ -77,9 +77,11 @@
 
 <script>
 import { getList, updateSysuser, createSysuser, removeSysUser } from '@/api/sysuser'
+import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 import waves from '@/directive/waves' // waves directive
 
 export default {
+  components: { Pagination },
   directives: { waves },
   filters: {
     statusFilter(status) {
@@ -93,7 +95,7 @@ export default {
   },
   data() {
     return {
-      list: null,
+      pageResult: { totalElements: 0 },
       listLoading: true,
       textMap: {
         update: 'Edit',
@@ -134,7 +136,7 @@ export default {
       this.listLoading = true
       console.log('condition = ' + JSON.stringify(this.condition))
       getList({ condition: this.condition }).then(response => {
-        this.list = response.data.items
+        this.pageResult = response.data
         this.listLoading = false
       })
     },
@@ -151,10 +153,9 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
-          tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
           updateSysuser(tempData).then(() => {
-            const index = this.list.findIndex(v => v.id === this.temp.id)
-            this.list.splice(index, 1, this.temp)
+            const index = this.pageResult.rows.findIndex(v => v.id === this.temp.id)
+            this.this.pageResult.rows.splice(index, 1, this.temp)
             this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
@@ -182,7 +183,7 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           createSysuser(this.temp).then(() => {
-            this.list.unshift(this.temp)
+            this.pageResult.rows.unshift(this.temp)
             this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
@@ -209,7 +210,7 @@ export default {
           type: 'success',
           duration: 2000
         })
-        this.list.splice(index, 1)
+        this.pageResult.rows.splice(index, 1)
       })
     }
   }
